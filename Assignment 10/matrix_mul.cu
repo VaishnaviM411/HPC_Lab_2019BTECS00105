@@ -8,13 +8,10 @@ void initWith(float num, float *a, int SIZE)
   }
 }
 
-__global__
 void matrixMultiply(float *result, float *a, float *b, int N, int SIZE)
 {
-  int start = blockIdx.x * blockDim.x + threadIdx.x;
-  int stride = gridDim.x * blockDim.x;
 
-  for(int i = start; i < SIZE; i += stride)
+  for(int i = 0; i < SIZE; i ++)
   {
     int row = i / N;
 
@@ -46,15 +43,11 @@ int main()
 {
   const int N = 1024;
   const int SIZE = N * N; // sqaure matrix
-  size_t size = SIZE * sizeof(float);
+  //size_t size = SIZE * sizeof(float);
 
-  float *a;
-  float *b;
-  float *c;
-
-  cudaMallocManaged(&a, size);
-  cudaMallocManaged(&b, size);
-  cudaMallocManaged(&c, size);
+  float *a=(float*)malloc(N*N * sizeof(float));
+  float *b=(float*)malloc(N*N * sizeof(float));
+  float *c=(float*)malloc(N*N * sizeof(float));
 
   initWith(3, a, SIZE);
   initWith(4, b, SIZE);
@@ -62,17 +55,14 @@ int main()
 
   double time_spent = 0.0;
   clock_t begin = clock();
-  matrixMultiply<<<100, 1024>>>(c, a, b, N, SIZE);
+  matrixMultiply(c, a, b, N, SIZE);
+
   clock_t end = clock();
  
   time_spent += (double)(end - begin) / CLOCKS_PER_SEC;
-  printf("The elapsed time is %f seconds\n", time_spent);
+  printf("The elapsed time is %f seconds", time_spent);
  
-  cudaDeviceSynchronize();
 
   checkElementsAre(12288, c, SIZE);
 
-  cudaFree(a);
-  cudaFree(b);
-  cudaFree(c);
 }

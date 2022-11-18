@@ -63,11 +63,19 @@ int main()
   size_t threadsPerBlock;
   size_t numberOfBlocks;
 
-  threadsPerBlock = 256;
-  numberOfBlocks = (N + threadsPerBlock - 1) / threadsPerBlock;
+  threadsPerBlock = 1024;
+  numberOfBlocks = 25;
+
+  double time_spent = 0.0;
+  clock_t begin = clock();
 
   addVectorsInto<<<numberOfBlocks, threadsPerBlock>>>(c, a, b, N);
 
+  clock_t end = clock();
+ 
+  time_spent += (double)(end - begin) / CLOCKS_PER_SEC;
+  printf("The elapsed time is %f seconds", time_spent);
+ 
   checkCuda( cudaGetLastError() );
   checkCuda( cudaDeviceSynchronize() );
 

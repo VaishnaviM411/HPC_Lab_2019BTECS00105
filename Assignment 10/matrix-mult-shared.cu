@@ -29,7 +29,7 @@ void matrixMultiply(float *result, float *a, float *b, int N, int SIZE)
     {
       sum += a[row * N + j] * b[N * j + row];
     }
-
+`````````````````````````````````````````````
     result[i] = sum;
   }
 }
